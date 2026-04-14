@@ -1,4 +1,12 @@
 //first try at the lexer
+
+
+/*Objectives:
+Implement a character reading function so it moves through without crashng. [✓]
+add a filter function to ignore what spaces etc. [✓]
+Add word recognition, move from printing single characters to identifying Identifiers etc. [ ]
+turn characters into digits [ ]
+*/
 #include <iostream>
 #include <vector>
 #include <string>
