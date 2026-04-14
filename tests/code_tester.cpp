@@ -4,12 +4,15 @@
 /*Objectives:
 Implement a character reading function so it moves through without crashng. [✓]
 add a filter function to ignore what spaces etc. [✓]
-Add word recognition, move from printing single characters to identifying Identifiers etc. [ ]
-turn characters into digits [ ]
+Add word recognition, move from printing single characters to identifying Identifiers etc. [✓]
+turn characters into digits [✓]
+Add a token struct that will show the type and literal
 */
 #include <iostream>
 #include <vector>
 #include <string>
+// #include <any>
+#include <cctype>
 
 
 
@@ -40,7 +43,7 @@ public:
         // 3. Otherwise, set 'ch' to the character at 'readPosition'
         // 4. Update 'position' to 'readPosition'
         // 5. Increment 'readPosition' by 1
-         if (next_char_pos >= input.size()) {
+         if (next_char_pos > input.size()) {
             ch = '\0';
          }
          else {
@@ -57,21 +60,57 @@ public:
         }
         
     }
+    
+
+    std::string CaptureIdentifier() {
+        // std::vector<std::any>  incase i ever decide to make this Capture multiple stuff
+        size_t start= current_char_pos;
+
+        while (std::isalpha(ch)) {
+            ReadChar();
+        }
+        size_t length = current_char_pos - start;
+
+        return input.substr(start, length);
+    }
+
+    std::string CaptureNumber(){
+        size_t start = current_char_pos;
+        while(isdigit(ch)) {
+            ReadChar();
+        }
+        size_t length = current_char_pos - start;
+        return input.substr(start, current_char_pos - start);
+
+    }
 
 
+   
 };
 
 
 int main() {
-    LexerTest myTest("Hello just testing");
+    LexerTest myTest("Hello just testing 124 8782 1 +_)()");
     myTest.ReadChar();
 
-    while (myTest.ch != 0) {
+    while (myTest.ch != '\0') {
         myTest.SkipWhiteSpaces();
         if (myTest.ch == '\0') break;
 
-        std::cout <<"Char: ["<< myTest.ch <<"] at index: "<<myTest.current_char_pos<<std::endl;
-        myTest.ReadChar();
+        if (std::isalpha(myTest.ch)) {
+            std::string word = myTest.CaptureIdentifier();
+            std::cout<<"found word: "<<word<<std::endl;
+            
+        }
+        else if (isdigit(myTest.ch)){
+            std::string num = myTest.CaptureNumber();
+            std::cout<<"found number: "<<num<<std::endl;
+        }
+
+        else {
+            myTest.ReadChar();
+        }
+
     }
 
 
