@@ -1,0 +1,6 @@
+build/
+owlc
+.vscode/
+.idea/
+*.swp
+*~
