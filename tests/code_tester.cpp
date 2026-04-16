@@ -15,10 +15,15 @@ Add a token struct that will show the type and literal
 #include <cctype>
 
 
-
+struct Token {
+        std::string type;
+        std::string literal;
+    };
 
 class LexerTest {
 public:
+
+    
 
     std::string input;
     size_t current_char_pos; //index of current
@@ -85,34 +90,82 @@ public:
     }
 
 
-   
-};
+    
+
+    Token NextToken() {
+        Token tok;
+        SkipWhiteSpaces();
+
+        switch (ch)
+        {
+        case '+':
+            tok = {"PlUS", "+"};
+            break;
+        case '-':
+            tok = {"MINUS", "-"};
+            break;
+        case '=':
+            tok = {"ASSIGN", "="};
+            break;
+        case '*':
+            tok = {"MULTIPLY", "-"};
+            break;
+        case '/':
+            tok = {"DIVIDE", "/"};
+            break;
+        case '\0':
+            tok = {"EOF", ""}; //end of file
+            break;
+        case '(':
+            tok = {"OPEN PARENTHESIS", "("};
+            break;
+        case ')':
+            tok = {"CLOSE PARENTHESIS", ")"};
+            break;
+        case '_':
+            tok = {"UNDERSCORE", "_"};
+            break;
+        
+        
+        default:
+            if (std::isalpha(ch)) {
+                tok.literal = CaptureIdentifier();
+                tok.type = "IDENTIFIER";
+                return tok; 
+            }
+            else if (std::isdigit(ch)) {
+                tok.literal = CaptureNumber();
+                tok.type = "NUMBER";
+                return tok;
+            }
+            else {
+                tok = {"ILLEGAL", std::string (1, ch)};
+
+            }
+            break;
+            }
+            
+            ReadChar();
+            return tok;
+
+
+
+            
+        }
+    };
+
+
 
 
 int main() {
-    LexerTest myTest("Hello just testing 124 8782 1 +_)()");
+    LexerTest myTest("x = Hello just testing 124 8782 1 +_)()");
     myTest.ReadChar();
 
-    while (myTest.ch != '\0') {
-        myTest.SkipWhiteSpaces();
-        if (myTest.ch == '\0') break;
-
-        if (std::isalpha(myTest.ch)) {
-            std::string word = myTest.CaptureIdentifier();
-            std::cout<<"found word: "<<word<<std::endl;
-            
-        }
-        else if (isdigit(myTest.ch)){
-            std::string num = myTest.CaptureNumber();
-            std::cout<<"found number: "<<num<<std::endl;
-        }
-
-        else {
-            myTest.ReadChar();
-        }
-
+    Token tok = myTest.NextToken();
+    while(tok.type!="EOF") {
+        std::cout<<"Token type: "<<tok.type<<"\nLiteral: "<<tok.literal<<"\n----------------------------------------------------------"<<std::endl;
+        tok = myTest.NextToken();
     }
-
 
     return 0;
 
